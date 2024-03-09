@@ -5,9 +5,8 @@ import Navigation from "../features/navbar/Navigation";
 function Home() {
     return ( 
         <div>
-            <NavBar>
-                <ProductList></ProductList>
-            </NavBar>
+            <Navigation />
+            <ProductList />
         </div>
      );
 }
