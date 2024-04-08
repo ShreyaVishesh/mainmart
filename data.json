@@ -1838,6 +1838,62 @@
         "https://cdn.dummyjson.com/product-images/100/3.jpg",
         "https://cdn.dummyjson.com/product-images/100/thumbnail.jpg"
       ]
+    },
+    {
+      "id": "7821",
+      "title": "food",
+      "description": "made by shreya",
+      "brand": "Apple",
+      "category": "groceries",
+      "price": 300,
+      "discountPercentage": 10,
+      "stock": 1,
+      "thumbnail": "https://cdn.dummyjson.com/product-images/100/thumbnail.jpg",
+      "images": [
+        "https://cdn.dummyjson.com/product-images/100/thumbnail.jpg",
+        "//",
+        "//",
+        "https://drive.google.com/file/d/1ptt_FHGyNWgtyK1jz4pZNFmqPo9uFUOV/view?usp=sharing"
+      ],
+      "rating": 0
+    },
+    {
+      "id": "4e53",
+      "title": "food",
+      "description": "made by shreya",
+      "brand": "Apple",
+      "category": "groceries",
+      "price": 1000,
+      "discountPercentage": 10,
+      "stock": 1,
+      "thumbnail": "https://drive.google.com/file/d/1ptt_FHGyNWgtyK1jz4pZNFmqPo9uFUOV/view?usp=sharing",
+      "images": [
+        "https://drive.google.com/file/d/1ptt_FHGyNWgtyK1jz4pZNFmqPo9uFUOV/view?usp=sharing",
+        "//",
+        "//",
+        "https://drive.google.com/file/d/1ptt_FHGyNWgtyK1jz4pZNFmqPo9uFUOV/view?usp=sharing"
+      ],
+      "rating": 0
+    },
+    {
+      "id": "a2ea",
+      "title": "book",
+      "description": "harry potter",
+      "brand": "Apple",
+      "category": "smartphones",
+      "Range": "affordable",
+      "price": 500,
+      "discountPercentage": 10,
+      "stock": 2,
+      "thumbnail": "https://drive.google.com/file/d/1ptt_FHGyNWgtyK1jz4pZNFmqPo9uFUOV/view?usp=sharing",
+      "video": "http://video.com",
+      "images": [
+        "",
+        "",
+        "",
+        "https://drive.google.com/file/d/1ptt_FHGyNWgtyK1jz4pZNFmqPo9uFUOV/view?usp=sharing"
+      ],
+      "rating": 0
     }
   ],
   "brands": [
