@@ -1,8 +1,9 @@
+
+
 import React, { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Importing arrow icons from react-icons
 import WatchIcon from '@mui/icons-material/Watch'; // Importing icon from MUI
 import BlenderIcon from '@mui/icons-material/Blender';
 import MicrowaveIcon from '@mui/icons-material/Microwave';
@@ -11,7 +12,10 @@ import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
 
 import IronIcon from '@mui/icons-material/Iron';
 import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
-// Import your 12 images statically 
+
+
+
+// Import your 13 images statically 
 // place 12 images in assets/categories with names such as shown below 
 
 // image 1 and  for kitchen/appliances and kitchen/builtin
@@ -19,7 +23,6 @@ import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural
 // image 7, 8, 9, 10 for personal care/fragrance, personal care/body care, personal care/skin care, personal care/makeup 
 // image 11, 12, 13, for watches by movement, watches by functionality, watches by style
 // so bring images accordingly and in order, some images might be inconsistent
-
 import image1 from '../../assets/categories/home2.jpg';
 import image2 from '../../assets/categories/home2.jpg';
 
@@ -27,15 +30,13 @@ import image3 from '../../assets/categories/home3.jpg';
 import image4 from '../../assets/categories/home4.jpg';
 import image5 from '../../assets/categories/personalcare1.jpg';
 import image6 from '../../assets/categories/personalcare2.jpg';
-import image7 from '../../assets/categories/personalcare3.jpg';
+import image7 from '../../assets/categories/personalcare1.jpg';
 import image8 from '../../assets/categories/personalcare4.jpg';
-import image9 from '../../assets/categories/watch1.jpg';
-import image10 from '../../assets/categories/watch2.jpg';
+import image9 from '../../assets/categories/personalcare2.jpg';
+import image10 from '../../assets/categories/personalcare2.jpg';
 import image11 from '../../assets/categories/watch3.jpg';
 import image12 from '../../assets/categories/watch4.jpg';
 import image13 from '../../assets/categories/watch4.jpg';
-import { Watch } from '@mui/icons-material';
-
 
 function useWindowSize() {
   const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });
@@ -82,8 +83,8 @@ function ImageCarousel() {
     spaceBetween: 24,
     autoplay: true,
     autoplaySpeed: 2000,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
+    prevArrow: false,
+    nextArrow: false,
   };
 
   const items = [
@@ -222,44 +223,31 @@ function ImageCarousel() {
     }
   ];
 
-
-  // Create an array of images
   const images = [image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13];
 
   return (
     <div className="flex justify-start items-center bg-gray-100">
       <Slider {...settings} className="w-full px-4">
         {items.map((item, index) => (
-          <div key={item.id} className="min-w-[33.333%] md:min-w-[25%] lg:min-w-[20%] p-4 flex-shrink-0">
-            <div className="rounded-full bg-gray-200 h-32 w-32 overflow-hidden relative mx-auto">
+          <div key={item.id} className="min-w-[33.333%] md:min-w-[25%] lg:min-w-[20%] p-4 flex-shrink-0"
+            onMouseEnter={() => setExpandedItemId(item.id)}
+            onMouseLeave={() => setExpandedItemId(null)}>
+            <div
+              className="rounded-full bg-gray-200 h-32 w-32 overflow-hidden relative mx-auto cursor-pointer">
               <img
                 src={images[index]} // Use the image from the array
                 alt={`Item ${item.id}`}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex justify-center items-center">
-              <button
-                className="text-center mr-2 cursor-pointer text-gray-800 hover:text-red-500"
-                onClick={() => toggleExpansion(item.id, item.itemsToShow)}
-                style={{ color: expandedItemId === item.id ? 'blue' : 'inherit' }}
-              >
-                {item.name}
-              </button>
-              <ArrowButton
-                expanded={expandedItemId === item.id}
-                onClick={() => toggleExpansion(item.id, item.itemsToShow)}
-              />
-            </div>
+            <h2 className="text-lg font-semibold mt-4">{item.name}</h2>
             {expandedItemId === item.id && (
-              <div>
+              <div className="bg-white p-6 rounded">
                 {item.itemsToShow.map((subitem, index) => (
-                  <div key={index} className="flex items-center justify-center">
-                    {/* {item.icon} Material-UI icon */}
-                    <button className="expanded-item bg-white text-gray-800 hover:text-red-500 py-2 px-4 rounded cursor-pointer">
-                      {subitem.icon}
-                      {subitem.name}
-
+                  <div key={index} className="mr-2 mb-2">
+                    <button className="expanded-item text-gray-800 hover:text-red-500 py-2 px-4 rounded cursor-pointer flex items-center">
+                      {/* {subitem.icon} */}
+                      <span className="ml-2">{subitem.name}</span>
                     </button>
                   </div>
                 ))}
@@ -271,29 +259,5 @@ function ImageCarousel() {
     </div>
   );
 }
-
-const ArrowButton = ({ expanded, onClick }) => (
-  <button onClick={onClick} className="focus:outline-none">
-    {expanded ? <FaChevronUp /> : <FaChevronDown />}
-  </button>
-);
-
-const PrevArrow = (props) => {
-  const { className, onClick } = props;
-  return (
-    <div className={`${className} left-arrow`} onClick={onClick}>
-      {/* <FaChevronLeft /> */}
-    </div>
-  );
-};
-
-const NextArrow = (props) => {
-  const { className, onClick } = props;
-  return (
-    <div className={`${className} right-arrow`} onClick={onClick}>
-      {/* <FaChevronRight /> */}
-    </div>
-  );
-};
 
 export default ImageCarousel;
