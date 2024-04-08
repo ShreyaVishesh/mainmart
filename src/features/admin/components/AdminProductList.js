@@ -476,65 +476,77 @@ function Pagination({ page, setPage, handlePage, totalItems }) {
   );
 }
 
-function ProductGrid({ products }) {
+export function ProductGrid({ products, handleCart }) {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
           {products.map((product) => (
-            <div>
+            <div className="group relative border-solid border-2 p-2 border-gray-200">
               <Link to={`/product-detail/${product.id}`} key={product.id}>
-                <div className="group relative border-solid border-2 p-2 border-gray-200">
-                  <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                    <img
-                      src={product.thumbnail}
-                      alt={product.title}
-                      className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                    />
-                  </div>
-                  <div className="mt-4 flex justify-between">
-                    <div>
-                      <h3 className="text-sm text-gray-700">
-                        <div href={product.thumbnail}>
-                          <span
-                            aria-hidden="true"
-                            className="absolute inset-0"
-                          />
-                          {product.title}
-                        </div>
-                      </h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        <StarIcon className="w-6 h-6 inline"></StarIcon>
-                        <span className=" align-bottom">{product.rating}</span>
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm block font-medium text-gray-900">
+                <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
+                  <img
+                    src={product.thumbnail}
+                    alt={product.title}
+                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                  />
+                </div>
+                <div className="flex flex-col items-center mt-4">
+                  <h2
+                    className="text-sm text-gray-700 text-center leading-tight"
+                    style={{
+                      maxHeight: "3rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <b>{product.title}</b>
+                  </h2>
+                  <div className="flex items-center mt-1">
+                    <h1>
+                      <span className="text-xs font-medium text-gray-900">
                         $
                         {Math.round(
                           product.price * (1 - product.discountPercentage / 100)
                         )}
-                      </p>
-                      <p className="text-sm block line-through font-medium text-gray-400">
+                      </span>
+                      <span className="text-xs line-through text-gray-400 mx-2">
                         ${product.price}
-                      </p>
-                    </div>
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {product.discountPercentage}% Off
+                      </span>
+                    </h1>
+                  </div>
+                  <div className="flex mt-1 items-center">
+                    
                   </div>
                   {product.deleted && (
-                    <div>
-                      <p className="text-sm text-red-400">product deleted</p>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-sm text-red-400">product deleted</p>
+                  </div>
+                )}
+                {/* will not be needed when backend is implemented */}
                 </div>
               </Link>
-              <div className="mt-5">
-                <Link
-                  to={`/admin/product-form/edit/${product.id}`}
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              <div className="grid grid-cols-4 gap-1 mt-2">
+                <button
+                  onClick={(e) => handleCart(e, product)}
+                  type="submit"
+                  className="col-span-3 bg-pink-500 text-white p-2 rounded"
                 >
-                  Edit Product
-                </Link>
-              </div>
+                  <span>Add to Cart</span>
+                </button>
+                
+              </div>{" "}
+              <div className="mt-5">
+<Link
+  to={`/admin/product-form/edit/${product.id}`}
+  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+>
+  Edit Product
+</Link>
+</div>
+
             </div>
           ))}
         </div>
@@ -542,3 +554,4 @@ function ProductGrid({ products }) {
     </div>
   );
 }
+

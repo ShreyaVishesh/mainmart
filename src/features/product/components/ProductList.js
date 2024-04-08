@@ -31,6 +31,8 @@ import { ITEMS_PER_PAGE } from "../../../app/constants.js";
 import { selectItems } from "../../cart/cartSlice";
 import { addToCartAsync } from "../../cart/cartSlice";
 import { selectLoggedInUser } from "../../auth/authSlice";
+import { discountedPrice } from '../../../app/constants';
+
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -595,9 +597,7 @@ export function ProductGrid({ products, handleCart }) {
                     <h1>
                       <span className="text-xs font-medium text-gray-900">
                         $
-                        {Math.round(
-                          product.price * (1 - product.discountPercentage / 100)
-                        )}
+                        {discountedPrice(product)}
                       </span>
                       <span className="text-xs line-through text-gray-400 mx-2">
                         ${product.price}
