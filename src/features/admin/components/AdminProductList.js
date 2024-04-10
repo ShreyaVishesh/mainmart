@@ -26,6 +26,7 @@ import {
 } from '@heroicons/react/20/solid';
 import { ITEMS_PER_PAGE } from '../../../app/constants';
 
+
 const sortOptions = [
   { name: 'Best Rating', sort: 'rating', order: 'desc', current: false },
   { name: 'Price: Low to High', sort: 'price', order: 'asc', current: false },
@@ -476,7 +477,7 @@ function Pagination({ page, setPage, handlePage, totalItems }) {
   );
 }
 
-export function ProductGrid({ products, handleCart }) {
+export function ProductGrid({ products }) {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
@@ -529,13 +530,7 @@ export function ProductGrid({ products, handleCart }) {
                 </div>
               </Link>
               <div className="grid grid-cols-4 gap-1 mt-2">
-                <button
-                  onClick={(e) => handleCart(e, product)}
-                  type="submit"
-                  className="col-span-3 bg-pink-500 text-white p-2 rounded"
-                >
-                  <span>Add to Cart</span>
-                </button>
+              
                 
               </div>{" "}
               <div className="mt-5">

@@ -82,11 +82,13 @@ function ProductForm() {
       setValue("discountPercentage", selectedProduct.discountPercentage);
       setValue("thumbnail", selectedProduct.thumbnail);
       setValue("stock", selectedProduct.stock);
+      setValue("Range", selectedProduct.Range);
       setValue("image1", selectedProduct.images[0]);
       setValue("image2", selectedProduct.images[1]);
       setValue("image3", selectedProduct.images[2]);
       setValue("brand", selectedProduct.brand);
       setValue("category", selectedProduct.category);
+      setValue("SubCategory", selectedProduct.SubCategory);
       setValue("highlight1", selectedProduct.highlights[0]);
       setValue("highlight2", selectedProduct.highlights[1]);
       setValue("highlight3", selectedProduct.highlights[2]);
@@ -331,6 +333,26 @@ function ProductForm() {
                   </select>
                 </div>
               </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="SubCategory"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  SubCategory
+                </label>
+                <div className="mt-2">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
+                    <input
+                      type="text"
+                      {...register("SubCategory"
+                      )}
+                      id="SubCategory"
+                      className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    />
+                  </div>
+                </div>
+              </div>
+
 
               <div className="sm:col-span-2">
                 <label
