@@ -10,6 +10,7 @@ import {
 import { useParams } from 'react-router-dom';
 import { addToCartAsync, selectItems } from '../../cart/cartSlice';
 import { selectLoggedInUser } from '../../auth/authSlice';
+import { discountedPrice } from '../../../app/constants';
 
 import { Grid } from 'react-loader-spinner';
 
@@ -153,7 +154,7 @@ export default function ProductDetail() {
                 ${product.price}
               </p>
               <p className="text-3xl tracking-tight text-gray-900">
-                ${product.discountPrice}
+                ${discountedPrice(product)}
               </p>
 
               {/* Reviews */}

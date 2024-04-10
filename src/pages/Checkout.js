@@ -5,11 +5,10 @@ import {
   selectItems,
   updateCartAsync,
 } from "../features/cart/cartSlice";
+import { updateUserAsync } from '../features/user/userSlice';
 import { Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import {
-  updateUserAsync,
-} from "../features/auth/authSlice";
+
 import { useState } from "react";
 import { createOrderAsync, selectCurrentOrder } from "../features/order/orderSlice";
 import { selectUserInfo } from '../features/user/userSlice';
