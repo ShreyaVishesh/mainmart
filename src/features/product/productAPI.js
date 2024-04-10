@@ -15,20 +15,18 @@ function extractPrices(inputString) {
 export function fetchAllProducts() {
   return new Promise(async (resolve) => {
     //TODO: we will not hard-code server URL here
-    const response = await fetch('http://localhost:8080/products')
-    const data = await response.json()
-    resolve({ data })
-  }
-  );
+    const response = await fetch('http://localhost:8080/products');
+    const data = await response.json();
+    resolve({ data });
+  });
 }
 export function fetchProductById(id) {
-  return new Promise(async (resolve) =>{
+  return new Promise(async (resolve) => {
     //TODO: we will not hard-code server URL here
-    const response = await fetch('http://localhost:8080/products/'+id) 
-    const data = await response.json()
-    resolve({data})
-  }
-  );
+    const response = await fetch('http://localhost:8080/products/' + id);
+    const data = await response.json();
+    resolve({ data });
+  });
 }
 export function createProduct(product) {
   return new Promise(async (resolve) => {
@@ -41,7 +39,6 @@ export function createProduct(product) {
     resolve({ data });
   });
 }
-
 export function updateProduct(update) {
   return new Promise(async (resolve) => {
     const response = await fetch(
@@ -57,60 +54,48 @@ export function updateProduct(update) {
     resolve({ data });
   });
 }
-
-
-export function fetchProductsByFilters(filter) {
-  // filter = {"category":"smartphone"}
-  // TODO : on server we will support multi values
-  // TODO : Multiple category attributes
+export function fetchProductsByFilters(filter, sort, pagination) {
+  // filter = {"category":["smartphone","laptops"]}
+  // sort = {_sort:"price",_order="desc"}
+  // pagination = {_page:1,_limit=10}
+  // TODO : on server we will support multi values in filter
+  // TODO : Server will filter deleted products in case of non-admin
   let queryString = '';
   for (let key in filter) {
-    if (key === "category" && Array.isArray(filter[key])) {
-      filter[key].forEach((value) => {
-        queryString += `${key}=${value}&`
-      })
-      continue;
+    const categoryValues = filter[key];
+    if (categoryValues.length) {
+      const lastCategoryValue = categoryValues[categoryValues.length - 1];
+      queryString += `${key}=${lastCategoryValue}&`;
     }
-    else if (key === "price") {
-      // TODO : Multiple Price attribute
-      console.log(filter[key][0], "and", filter[key][filter[key].length - 1]);
-      const lowerPrice = extractPrices(filter[key][0]).lowerPrice;
-      const higherPrice = extractPrices(filter[key][filter[key].length - 1]).higherPrice;
-      console.log(lowerPrice, higherPrice);
-      queryString += `${key}_lte=${higherPrice}&`
-    }
-    else {
-      queryString += `${key}=${filter[key]}&`
-    }
-    console.log("Query string in final api call",queryString);
   }
-
+  for (let key in sort) {
+    queryString += `${key}=${sort[key]}&`;
+  }
+  console.log(pagination);
+  for (let key in pagination) {
+    queryString += `${key}=${pagination[key]}&`;
+  }
   return new Promise(async (resolve) => {
     //TODO: we will not hard-code server URL here
-    const url = "http://localhost:8080/products?" + queryString;
-    const response = await fetch(url)
-    const data = await response.json()
-    const finalData = data.data;
-    console.log("Final url", url);
-    console.log("Final data",finalData);
-    resolve({ finalData })
-  }
-  );
+    const response = await fetch(
+      'http://localhost:8080/products?' + queryString
+    );
+    const data = await response.json();
+    const totalItems = await response.headers.get('X-Total-Count');
+    resolve({ data: { products: data, totalItems: +totalItems } });
+  });
 }
-
 export function fetchCategories() {
   return new Promise(async (resolve) => {
-    const response = await fetch('http://localhost:8080/category')
-    const data = await response.json()
-    resolve({ data })
-  }
-  );
+    const response = await fetch('http://localhost:8080/categories');
+    const data = await response.json();
+    resolve({ data });
+  });
 }
 export function fetchBrands() {
   return new Promise(async (resolve) => {
-    const response = await fetch('http://localhost:8080/brands')
-    const data = await response.json()
-    resolve({ data })
-  }
-  );
+    const response = await fetch('http://localhost:8080/brands');
+    const data = await response.json();
+    resolve({ data });
+  });
 }

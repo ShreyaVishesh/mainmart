@@ -14,19 +14,11 @@ const initialState = {
   brands: [],
   categories: [],
   status: 'idle',
-  totalItems:0,
-  selectedProduct:null
+  totalItems: 0,
+  selectedProduct: null,
 };
 
 
-export const fetchAllProductsAsync = createAsyncThunk(
-  'product/fetchAllProducts',
-  async () => {
-    const response = await fetchAllProducts();
-    // The value we return becomes the `fulfilled` action payload
-    return response.data;
-  }
-);
 export const fetchProductByIdAsync = createAsyncThunk(
   'product/fetchProductById',
   async (id) => {
@@ -35,6 +27,16 @@ export const fetchProductByIdAsync = createAsyncThunk(
     return response.data;
   }
 );
+
+export const fetchProductsByFiltersAsync = createAsyncThunk(
+  'product/fetchProductsByFilters',
+  async ({ filter, sort, pagination, admin }) => {
+    const response = await fetchProductsByFilters(filter, sort, pagination, admin);
+    // The value we return becomes the `fulfilled` action payload
+    return response.data;
+  }
+);
+
 export const fetchBrandsAsync = createAsyncThunk(
   'product/fetchBrands',
   async () => {
@@ -52,20 +54,6 @@ export const fetchCategoriesAsync = createAsyncThunk(
   }
 );
 
-export const fetchProductsByFiltersAsync = createAsyncThunk(
-  'product/fetchProductsByFilters',
-  async (filter) => {
-    console.log("Filter in req method", filter);
-    if (!filter._page) {
-      filter._page = 1;
-      filter._per_page = 9;
-    }
-    const response = await fetchProductsByFilters(filter);
-    console.log("Response:", response.finalData);
-    // The value we return becomes the `fulfilled` action payload
-    return response.finalData;
-  }
-);
 export const createProductAsync = createAsyncThunk(
   'product/create',
   async (product) => {
@@ -82,7 +70,6 @@ export const updateProductAsync = createAsyncThunk(
   }
 );
 
-
 export const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -93,19 +80,13 @@ export const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllProductsAsync.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchAllProductsAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.products = action.payload;
-      })
       .addCase(fetchProductsByFiltersAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchProductsByFiltersAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.products = action.payload;
+        state.products = action.payload.products;
+        state.totalItems = action.payload.totalItems;
       })
       .addCase(fetchBrandsAsync.pending, (state) => {
         state.status = 'loading';
@@ -144,6 +125,8 @@ export const productSlice = createSlice({
           (product) => product.id === action.payload.id
         );
         state.products[index] = action.payload;
+        state.selectedProduct = action.payload;
+
       });
   },
 });
@@ -154,7 +137,8 @@ export const selectAllProducts = (state) => state.product.products;
 export const selectBrands = (state) => state.product.brands;
 export const selectCategories = (state) => state.product.categories;
 export const selectProductById = (state) => state.product.selectedProduct;
-export const selectTotalItems = (state) => state.product.totalItems;
 export const selectProductListStatus = (state) => state.product.status;
+
+export const selectTotalItems = (state) => state.product.totalItems;
 
 export default productSlice.reducer;
