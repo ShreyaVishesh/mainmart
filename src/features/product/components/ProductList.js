@@ -1,5 +1,5 @@
-import React, { useState, Fragment, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, Fragment, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   fetchBrandsAsync,
   fetchCategoriesAsync,
@@ -9,35 +9,46 @@ import {
   selectCategories,
   selectProductListStatus,
   selectTotalItems,
-} from '../productSlice';
-import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+} from "../productSlice";
+import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   StarIcon,
-} from '@heroicons/react/20/solid';
-import { Link } from 'react-router-dom';
+} from "@heroicons/react/20/solid";
+import { Link } from "react-router-dom";
 import {
   ChevronDownIcon,
   FunnelIcon,
   MinusIcon,
   PlusIcon,
   Squares2X2Icon,
-} from '@heroicons/react/20/solid';
-import { ITEMS_PER_PAGE } from '../../../app/constants';
-import { discountedPrice } from '../../../app/constants';
-import Pagination from '../../common/Pagination';
-import { Grid } from 'react-loader-spinner';
+} from "@heroicons/react/20/solid";
+import { ITEMS_PER_PAGE } from "../../../app/constants";
+import { discountedPrice } from "../../../app/constants";
+import Pagination from "../../common/Pagination";
+import { Grid } from "react-loader-spinner";
+import CartIcon from "./icons";
 
 const sortOptions = [
-  { name: 'Best Rating', sort: 'rating', order: 'desc', current: false },
-  { name: 'Price: Low to High', sort: 'discountPrice', order: 'asc', current: false },
-  { name: 'Price: High to Low', sort: 'discountPrice', order: 'desc', current: false },
+  { name: "Best Rating", sort: "rating", order: "desc", current: false },
+  {
+    name: "Price: Low to High",
+    sort: "discountPrice",
+    order: "asc",
+    current: false,
+  },
+  {
+    name: "Price: High to Low",
+    sort: "discountPrice",
+    order: "desc",
+    current: false,
+  },
 ];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function ProductList() {
@@ -49,13 +60,13 @@ export default function ProductList() {
   const status = useSelector(selectProductListStatus);
   const filters = [
     {
-      id: 'category',
-      name: 'Category',
+      id: "category",
+      name: "Category",
       options: categories,
     },
     {
-      id: 'brand',
-      name: 'Brands',
+      id: "brand",
+      name: "Brands",
       options: brands,
     },
   ];
@@ -156,10 +167,10 @@ export default function ProductList() {
                               onClick={(e) => handleSort(e, option)}
                               className={classNames(
                                 option.current
-                                  ? 'font-medium text-gray-900'
-                                  : 'text-gray-500',
-                                active ? 'bg-gray-100' : '',
-                                'block px-4 py-2 text-sm'
+                                  ? "font-medium text-gray-900"
+                                  : "text-gray-500",
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm"
                               )}
                             >
                               {option.name}
@@ -401,7 +412,7 @@ function ProductGrid({ products, status }) {
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-          {status === 'loading' ? (
+          {status === "loading" ? (
             <Grid
               height="80"
               width="80"
@@ -415,48 +426,69 @@ function ProductGrid({ products, status }) {
           ) : null}
           {products.map((product) => (
             <Link to={`/product-detail/${product.id}`} key={product.id}>
-              <div className="group relative border-solid border-2 p-2 border-gray-200">
-                <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                  <img
-                    src={product.thumbnail}
-                    alt={product.title}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                  />
-                </div>
-                <div className="mt-4 flex justify-between">
-                  <div>
-                    <h3 className="text-sm text-gray-700">
-                      <div href={product.thumbnail}>
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {product.title}
-                      </div>
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      <StarIcon className="w-6 h-6 inline"></StarIcon>
-                      <span className=" align-bottom">{product.rating}</span>
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm block font-medium text-gray-900">
-                      ${discountedPrice(product)}
-                    </p>
-                    <p className="text-sm block line-through font-medium text-gray-400">
-                      ${product.price}
-                    </p>
-                  </div>
-                </div>
-                {product.deleted && (
-                  <div>
-                    <p className="text-sm text-red-400">product deleted</p>
-                  </div>
-                )}
-                {product.stock <= 0 && (
-                  <div>
-                    <p className="text-sm text-red-400">out of stock</p>
-                  </div>
-                )}
+            <div className="group relative border-solid border-2 p-2 border-gray-200 text-center">
+          
+              {/* Thumbnail */}
+              <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
+                <img
+                  src={product.thumbnail}
+                  alt={product.title}
+                  className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                />
               </div>
-            </Link>
+          
+              {/* Title */}
+              <div className="mt-4">
+                <h1 className="text-sm text-gray-700">
+                  <span aria-hidden="true" className="absolute inset-0" />
+                  {product.title}
+                </h1>
+              </div>
+          
+              {/* Price Section */}
+              <div className="mt-1">
+                <h1>
+                  <span className="text-xs font-medium text-gray-900">
+                    ${discountedPrice(product)}
+                  </span>
+                  <span className="text-xs line-through text-gray-400 mx-2">
+                    ${product.price}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {product.discountPercentage}% Off
+                  </span>
+                </h1>
+              </div>
+          
+              {/* Rating */}
+              <div className="mt-1 flex justify-center items-center">
+                <StarIcon className="w-4 h-4 text-yellow-400 inline-block" />
+                <span className="text-xs text-gray-500 align-bottom ml-1">
+                  {product.rating}
+                </span>
+              </div>
+          
+              {/* Add to Cart */}
+              <div className="grid grid-cols-4 gap-1 mt-2">
+                              <button className="col-span-3 bg-pink-500 text-white p-2 rounded">
+                                Add to Cart
+                              </button>
+                              <div className="col-span-1 flex justify-center items-center">
+                                <CartIcon color="pink" className="w-4 h-4" />
+                              </div>
+                            </div>
+          
+              {/* Additional Information */}
+              {product.deleted && (
+                <p className="text-sm text-red-400 mt-2">product deleted</p>
+              )}
+              {product.stock <= 0 && (
+                <p className="text-sm text-red-400 mt-2">out of stock</p>
+              )}
+            </div>
+          </Link>
+          
+          
           ))}
         </div>
       </div>
