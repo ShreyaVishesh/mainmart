@@ -8,6 +8,7 @@ const initialState = {
   totalOrders: 0
 };
 //we may need more info of current order
+
 export const createOrderAsync = createAsyncThunk(
   'order/createOrder',
   async (order) => {
@@ -33,6 +34,7 @@ export const fetchAllOrdersAsync = createAsyncThunk(
     return response.data;
   }
 );
+
 export const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -69,8 +71,12 @@ export const orderSlice = createSlice({
       })
   },
 });
+
 export const { resetOrder } = orderSlice.actions;
+
 export const selectCurrentOrder = (state) => state.order.currentOrder;
 export const selectOrders = (state) => state.order.orders;
 export const selectTotalOrders = (state) => state.order.totalOrders;
+export const selectStatus = (state) => state.order.status;
+
 export default orderSlice.reducer;

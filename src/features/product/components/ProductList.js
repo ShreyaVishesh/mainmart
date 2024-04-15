@@ -474,7 +474,7 @@ function ProductGrid({ products, status }) {
                                 Add to Cart
                               </button>
                               <div className="col-span-1 flex justify-center items-center">
-                                <CartIcon color="pink" className="w-4 h-4" />
+                                <CartIcon color="pink"/>
                               </div>
                             </div>
           

@@ -4,23 +4,29 @@ import { addToCart, deleteItemFromCart, fetchItemsByUserId, resetCart, updateCar
 const initialState = {
   status: 'idle',
   items: [],
+  cartLoaded: false
 };
+
 export const addToCartAsync = createAsyncThunk(
   'cart/addToCart',
-  async (item) => {
+  async ({item, alert}) => {
     const response = await addToCart(item);
+    alert.success('Item Added to Cart');
+
     // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
 );
+
 export const fetchItemsByUserIdAsync = createAsyncThunk(
   'cart/fetchItemsByUserId',
-  async (userId) => {
-    const response = await fetchItemsByUserId(userId);
+  async () => {
+    const response = await fetchItemsByUserId();
     // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
 );
+
 export const updateCartAsync = createAsyncThunk(
   'cart/updateCart',
   async (update) => {
@@ -38,23 +44,20 @@ export const deleteItemFromCartAsync = createAsyncThunk(
     return response.data;
   }
 );
+
 export const resetCartAsync = createAsyncThunk(
   'cart/resetCart',
-  async (userId) => {
-    const response = await resetCart(userId);
+  async () => {
+    const response = await resetCart();
     // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
 );
 
-
-export const counterSlice = createSlice({
+export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    increment: (state) => {
-      state.value += 1;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -71,6 +74,11 @@ export const counterSlice = createSlice({
       .addCase(fetchItemsByUserIdAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.items = action.payload;
+        state.cartLoaded = true;
+      })
+      .addCase(fetchItemsByUserIdAsync.rejected, (state, action) => {
+        state.status = 'idle';
+        state.cartLoaded = true;
       })
       .addCase(updateCartAsync.pending, (state) => {
         state.status = 'loading';
@@ -95,9 +103,13 @@ export const counterSlice = createSlice({
         state.status = 'idle';
         state.items = [];
       })
-    },
-  });
-  
-  export const { increment } = counterSlice.actions;
-  export const selectItems = (state) => state.cart.items;
-  export default counterSlice.reducer;
+  },
+});
+
+// export const { increment } = cartSlice.actions;
+
+export const selectItems = (state) => state.cart.items;
+export const selectCartStatus = (state) => state.cart.status;
+export const selectCartLoaded = (state) => state.cart.cartLoaded;
+
+export default cartSlice.reducer;

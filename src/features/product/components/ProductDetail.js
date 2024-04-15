@@ -27,6 +27,9 @@ export default function ProductDetail() {
   const product = useSelector(selectProductById);
   const dispatch = useDispatch();
   const params = useParams();
+  const user = useSelector(selectLoggedInUser);
+
+
 
   const status = useSelector(selectProductListStatus);
 
@@ -34,9 +37,11 @@ export default function ProductDetail() {
     e.preventDefault();
     if (items.findIndex((item) => item.product.id === product.id) < 0) {
       console.log({ items, product });
+      console.log(user);
       const newItem = {
         product: product.id,
         quantity: 1,
+        user: user.id,
       };
       if (selectedColor) {
         newItem.color = selectedColor;
@@ -44,6 +49,7 @@ export default function ProductDetail() {
       if (selectedSize) {
         newItem.size = selectedSize;
       }
+      console.log("New Item",newItem);
       dispatch(addToCartAsync({item:newItem, alert}));
     } 
   };
