@@ -36,6 +36,8 @@
   .blue-theme button:hover {
     background-color: var(--hover-color);
   }
-  
-  /* Add more blue-themed styles as needed */
+  .big-header {
+    font-size: 2cm;
+    color: var(--hover-color); /* Adjust as needed */
+  }
   

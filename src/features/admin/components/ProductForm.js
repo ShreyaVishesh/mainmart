@@ -28,8 +28,7 @@ function ProductForm() {
   const dispatch = useDispatch();
   const params = useParams();
   const selectedProduct = useSelector(selectProductById);
-  const [colors, setColors] = useState(selectedProduct.colors || []);
-  const [inputColor, setInputColor] = useState("");
+
 
   const [openModal, setOpenModal] = useState(null);
   useEffect(() => {
@@ -47,7 +46,7 @@ function ProductForm() {
       setValue("discountPercentage", selectedProduct.discountPercentage);
       setValue("thumbnail", selectedProduct.thumbnail);
       setValue("stock", selectedProduct.stock);
-      setColors(selectedProduct.colors || []);
+      
       setValue("video", selectedProduct.video);
       setValue("image1", selectedProduct.images[0]);
       setValue("image2", selectedProduct.images[1]);
@@ -63,19 +62,7 @@ function ProductForm() {
     product.deleted = true;
     dispatch(updateProductAsync(product));
   };
-  const handleColorChange = (event) => {
-    setInputColor(event.target.value);
-  };
-
-  const handleColorKeyDown = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      if (inputColor) {
-        setColors([...colors, inputColor]);
-        setInputColor("");
-      }
-    }
-  };
+ 
   return (
     <>
     <div className="blue-theme">
@@ -112,9 +99,7 @@ function ProductForm() {
       >
         <div className="space-y-12 bg-white p-12">
           <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Add Product
-            </h2>
+            
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               {selectedProduct && selectedProduct.deleted && (
                 <h2 className="text-red-500 sm:col-span-6">
@@ -124,7 +109,7 @@ function ProductForm() {
               <div className="sm:col-span-6">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900" 
                 >
                   Product Name
                 </label>
@@ -144,7 +129,7 @@ function ProductForm() {
               <div className="col-span-full">
                 <label
                   htmlFor="description"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Description
                 </label>
@@ -166,7 +151,7 @@ function ProductForm() {
               <div className="col-span-full">
                 <label
                   htmlFor="brand"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Brand
                 </label>
@@ -188,7 +173,7 @@ function ProductForm() {
               <div className="col-span-full">
                 <label
                   htmlFor="category"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Category
                 </label>
@@ -210,7 +195,7 @@ function ProductForm() {
               <div className="col-span-full">
                 <label
                   htmlFor="subCategory"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Sub Category
                 </label>
@@ -225,42 +210,11 @@ function ProductForm() {
                   </div>
                 </div>
               </div>
-              <div className="col-span-full">
-              <label
-                  htmlFor="colors"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Add colors
-                </label>
-              <input
-                type="text"
-                
-                value={inputColor}
-                onChange={handleColorChange}
-                onKeyDown={handleColorKeyDown}
-                placeholder="Type a color and press Enter"
-                size="25"
-              />
-
               
-                {colors.map((color, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      backgroundColor: color,
-                      color: "white",
-                      padding: "5px",
-                      margin: "5px",
-                    }}
-                  >
-                    {color}
-                  </span>
-                ))}
-              </div>
               <div className="col-span-full">
                 <label
                   htmlFor="range"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Range
                 </label>
@@ -280,7 +234,7 @@ function ProductForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="price"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Price
                 </label>
@@ -302,7 +256,7 @@ function ProductForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="discountPercentage"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Discount Percentage
                 </label>
@@ -324,7 +278,7 @@ function ProductForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="stock"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Stock
                 </label>
@@ -345,7 +299,7 @@ function ProductForm() {
               <div className="sm:col-span-6">
                 <label
                   htmlFor="thumbnail"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Thumbnail
                 </label>
@@ -365,7 +319,7 @@ function ProductForm() {
               <div className="sm:col-span-6">
                 <label
                   htmlFor="image1"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Image 1
                 </label>
@@ -383,7 +337,7 @@ function ProductForm() {
               <div className="sm:col-span-6">
                 <label
                   htmlFor="image2"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Image 2
                 </label>
@@ -401,7 +355,7 @@ function ProductForm() {
               <div className="sm:col-span-6">
                 <label
                   htmlFor="image2"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Image 3
                 </label>
@@ -419,7 +373,7 @@ function ProductForm() {
               <div className="sm:col-span-6">
                 <label
                   htmlFor="video"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-2xl font-medium leading-6 text-dark-blue-900"
                 >
                   Video
                 </label>
@@ -436,111 +390,35 @@ function ProductForm() {
               </div>
             </div>
           </div>
-          <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Extra{" "}
-            </h2>
-            <div className="mt-10 space-y-10">
-              <fieldset>
-                <legend className="text-sm font-semibold leading-6 text-gray-900">
-                  By Email
-                </legend>
-                <div className="mt-6 space-y-6">
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="comments"
-                        name="comments"
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="comments"
-                        className="font-medium text-gray-900"
-                      >
-                        Comments
-                      </label>
-                      <p className="text-gray-500">
-                        Get notified when someones posts a comment on a posting.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="candidates"
-                        name="candidates"
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="candidates"
-                        className="font-medium text-gray-900"
-                      >
-                        Candidates
-                      </label>
-                      <p className="text-gray-500">
-                        Get notified when a candidate applies for a job.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="offers"
-                        name="offers"
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                      />
-                    </div>
-                    <div className="text-sm leading-6">
-                      <label
-                        htmlFor="offers"
-                        className="font-medium text-gray-900"
-                      >
-                        Offers
-                      </label>
-                      <p className="text-gray-500">
-                        Get notified when a candidate accepts or rejects an
-                        offer.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
-          </div>
+          
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            type="button"
-            className="text-sm font-semibold leading-6 text-gray-900"
-          >
-            Cancel
-          </button>
-          {selectedProduct && !selectedProduct.deleted && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setOpenModal(true);
-              }}
-              className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Delete
-            </button>
-          )}
-          <button
-            type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Save
-          </button>
-        </div>
+        <div className="flex justify-center gap-x-6">
+  <button
+    type="button"
+    onClick={() => window.history.back()}
+    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+  >
+    Cancel
+  </button>
+  {selectedProduct && !selectedProduct.deleted && (
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        setOpenModal(true);
+      }}
+      className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+    >
+      Delete
+    </button>
+  )}
+  <button
+    type="submit"
+    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+  >
+    Save
+  </button>
+</div>
       </form>
       </div>
       {selectedProduct && (
