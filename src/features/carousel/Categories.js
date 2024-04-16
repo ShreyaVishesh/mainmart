@@ -112,7 +112,7 @@ function ImageCarousel() {
       id: 2,
       name: "Built-in",
       itemsToShow: [
-        { name: "Built-in Microwaves/BBQ", icon: <MicrowaveIcon /> },
+        { name: "Microwaves    /BBQ", icon: <MicrowaveIcon /> },
         { name: "Built-in Oven", icon: <MicrowaveIcon /> },
         { name: "Chimney" },
         { name: "Hobbs" },
@@ -259,17 +259,21 @@ function ImageCarousel() {
             </div>
             <h2 className="text-lg font-semibold mt-4">{item.name}</h2>
             {expandedItemId === item.id && (
-              <div className="bg-white p-6 rounded">
-                {item.itemsToShow.map((subitem, index) => (
-                  <div key={index} className="mr-2 mb-2">
-                    <button className="expanded-item text-gray-800 hover:text-red-500 py-2 px-4 rounded cursor-pointer flex items-center">
-                      {/* {subitem.icon} */}
-                      <span className="ml-2">{subitem.name}</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+  <div className="bg-white p-6 rounded flex flex-wrap min-w-[150px]"> 
+    {item.itemsToShow.map((subitem, index) => (
+      <div key={index} className="mr-2 mb-2">
+        <button className="expanded-item text-gray-800 hover:text-red-500 py-2 px-4 rounded cursor-pointer flex items-center max-w-full break-words">  
+          <span className="ml-2">{subitem.name}</span>
+        </button>
+      </div>
+    ))}
+  </div>
+)}
+
+
+
+
+
           </div>
         ))}
       </Slider>
