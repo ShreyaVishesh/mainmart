@@ -1,14 +1,13 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  fetchAllProductsAsync,
   fetchBrandsAsync,
   fetchCategoriesAsync,
   fetchProductsByFiltersAsync,
   selectAllProducts,
   selectBrands,
   selectCategories,
-  selectProductListStatus,
-  selectTotalItems,
 } from "../productSlice";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -17,7 +16,10 @@ import {
   ChevronRightIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
+import CartIcon from "./icons";
 import { Link } from "react-router-dom";
+
+import { Rating } from "@mui/material";
 import {
   ChevronDownIcon,
   FunnelIcon,
@@ -25,26 +27,15 @@ import {
   PlusIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
-import { ITEMS_PER_PAGE } from "../../../app/constants";
-import { discountedPrice } from "../../../app/constants";
-import Pagination from "../../common/Pagination";
-import { Grid } from "react-loader-spinner";
-import CartIcon from "./icons";
+import { ITEMS_PER_PAGE } from "../../../app/constants.js";
+import { selectItems } from "../../cart/cartSlice";
+import { addToCartAsync } from "../../cart/cartSlice";
+import { selectLoggedInUser } from "../../auth/authSlice";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
-  {
-    name: "Price: Low to High",
-    sort: "discountPrice",
-    order: "asc",
-    current: false,
-  },
-  {
-    name: "Price: High to Low",
-    sort: "discountPrice",
-    order: "desc",
-    current: false,
-  },
+  { name: "Price: Low to High", sort: "price", order: "asc", current: false },
+  { name: "Price: High to Low", sort: "price", order: "desc", current: false },
 ];
 
 function classNames(...classes) {
@@ -52,12 +43,45 @@ function classNames(...classes) {
 }
 
 export default function ProductList() {
-  const dispatch = useDispatch();
-  const products = useSelector(selectAllProducts);
+  const [product, setProduct] = useState({
+    title: "Loading...",
+    description: "Loading...",
+    price: 0,
+    discountPercentage: 0,
+    rating: 0,
+    reviews: [{}],
+    stock: 0,
+    brand: "Loading...",
+    category: "Loading...",
+    images: [],
+  });
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const brands = useSelector(selectBrands);
   const categories = useSelector(selectCategories);
-  const totalItems = useSelector(selectTotalItems);
-  const status = useSelector(selectProductListStatus);
+  const items = useSelector(selectItems);
+  const products = useSelector(selectAllProducts);
+  const user = useSelector(selectLoggedInUser);
+  const dispatch = useDispatch();
+  const handleCart = async (e, product, quantity = 1) => {
+    e.preventDefault();
+    try {
+      console.log(product);
+      const newItem = { product: product.id, quantity, user: user.id };
+
+      const response = await fetch(`http://localhost:8080/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newItem),
+      });
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+
+
+  };
+
   const filters = [
     {
       id: "category",
@@ -69,57 +93,103 @@ export default function ProductList() {
       name: "Brands",
       options: brands,
     },
+    {
+      id: "price",
+      name: "Price",
+      options: [
+        { value: "0-50", label: "Under $50", checked: false },
+        { value: "51-100", label: "$51 - $100", checked: false },
+        { value: "101-150", label: "$101 - $150", checked: false },
+        { value: "151-200", label: "$151 - $200", checked: false },
+        { value: "201-250", label: "$201 - $250", checked: false },
+        { value: "251+", label: "Over $250", checked: false },
+      ],
+    },
   ];
-
   const [filter, setFilter] = useState({});
-  const [sort, setSort] = useState({});
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [page, setPage] = useState(1);
 
-  const handleFilter = (e, section, option) => {
-    console.log(e.target.checked);
-    const newFilter = { ...filter };
-    if (e.target.checked) {
-      if (newFilter[section.id]) {
-        newFilter[section.id].push(option.value);
+  const handleFilter = async (e, section, option) => {
+    console.log("Current Filter:", filter);
+
+    console.log("Updating:", section.id, option.value);
+
+    await setFilter((prevState) => {
+      const updatedFilter = { ...prevState };
+      if (e.target.checked) {
+        if (!updatedFilter[section.id]) {
+          updatedFilter[section.id] = [option.value];
+        } else if (!updatedFilter[section.id].includes(option.value)) {
+          updatedFilter[section.id].push(option.value);
+        }
       } else {
-        newFilter[section.id] = [option.value];
+        if (updatedFilter[section.id]) {
+          updatedFilter[section.id] = updatedFilter[section.id].filter(
+            (val) => val !== option.value
+          );
+        }
       }
-    } else {
-      const index = newFilter[section.id].findIndex(
-        (el) => el === option.value
-      );
-      newFilter[section.id].splice(index, 1);
-    }
-    console.log({ newFilter });
-
-    setFilter(newFilter);
+      return updatedFilter;
+    });
   };
 
-  const handleSort = (e, option) => {
-    const sort = { _sort: option.sort, _order: option.order };
-    console.log({ sort });
-    setSort(sort);
+  const handleSort = async (e, option) => {
+    console.log(option);
+    await setFilter((prevState) => {
+      const updatedFilter = { ...prevState };
+      if (option.order === "desc") {
+        updatedFilter._sort = "-" + option.sort;
+        console.log("Mai aa gya");
+      } else {
+        updatedFilter._sort = option.sort;
+      }
+      return updatedFilter;
+    });
   };
+  const handlePage = async (page) => {
+    console.log("handlepage clicked", page);
 
-  const handlePage = (page) => {
-    console.log({ page });
-    setPage(page);
+    // Update the filter state with the new page
+    await setFilter((prevState) => {
+      const currFilter = { ...prevState };
+      currFilter._page = page;
+
+      return currFilter;
+    });
+
+    // Update the page state directly
+    await setPage(page);
+
+    console.log("handlepage click verified", filter);
   };
-
-  useEffect(() => {
-    const pagination = { _page: page, _limit: ITEMS_PER_PAGE };
-    dispatch(fetchProductsByFiltersAsync({ filter, sort, pagination }));
-  }, [dispatch, filter, sort, page]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [totalItems, sort]);
 
   useEffect(() => {
     dispatch(fetchBrandsAsync());
     dispatch(fetchCategoriesAsync());
   }, []);
+
+  useEffect(() => {
+    const pagination = { _page: page, _per_page: ITEMS_PER_PAGE || 9 }; // Fixing default value assignment
+    const updatedFilter = {
+      ...filter,
+      _page: page,
+      _per_page: pagination._per_page,
+    }; // Using pagination._per_page instead of ITEMS_PER_PAGE
+
+    console.log("Updated Filter:", updatedFilter);
+    dispatch(fetchProductsByFiltersAsync(updatedFilter));
+  }, [page, filter]); // Including ITEMS_PER_PAGE in the dependencies array
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("Filter in useEffect", filter);
+      await dispatch(fetchProductsByFiltersAsync(filter)); // Pass filter to fetchProductsByFiltersAsync
+    };
+
+    fetchData();
+
+    console.log("Products", products);
+  }, [dispatch, filter]);
 
   return (
     <div className="bg-white">
@@ -211,24 +281,24 @@ export default function ProductList() {
                 handleFilter={handleFilter}
                 filters={filters}
               ></DesktopFilter>
-              {/* Product grid */}
+
               <div className="lg:col-span-3">
-                <ProductGrid products={products} status={status}></ProductGrid>
+                <ProductGrid
+                  products={Array.isArray(products) ? products : []}
+                  handleCart={handleCart}
+                ></ProductGrid>
               </div>
-              {/* Product grid end */}
             </div>
           </section>
 
-          {/* section of product and filters ends */}
           <Pagination
             page={page}
             setPage={setPage}
             handlePage={handlePage}
-            totalItems={totalItems}
           ></Pagination>
         </main>
       </div>
-    </div>
+    </div >
   );
 }
 
@@ -323,9 +393,6 @@ function MobileFilter({
                                   defaultValue={option.value}
                                   type="checkbox"
                                   defaultChecked={option.checked}
-                                  onChange={(e) =>
-                                    handleFilter(e, section, option)
-                                  }
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <label
@@ -350,7 +417,6 @@ function MobileFilter({
     </Transition.Root>
   );
 }
-
 function DesktopFilter({ handleFilter, filters }) {
   return (
     <form className="hidden lg:block">
@@ -406,89 +472,187 @@ function DesktopFilter({ handleFilter, filters }) {
     </form>
   );
 }
+function Pagination({ page, setPage, handlePage, totalItems = 100 }) {
+  const checkWhetherPageShouldBeShown = (pageIdx) => {
+    if (
+      pageIdx + 1 === page ||
+      pageIdx + 1 === page + 1 ||
+      pageIdx + 1 === Math.ceil(totalItems / ITEMS_PER_PAGE) ||
+      pageIdx + 1 === Math.ceil(totalItems / ITEMS_PER_PAGE) - 1
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  return (
+    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 cursor-pointer">
+      <div className="flex flex-1 justify-between sm:hidden">
+        <a
+          href="#"
+          className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Previous
+        </a>
+        <a
+          href="#"
+          className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Next
+        </a>
+      </div>
+      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing{" "}
+            <span className="font-medium">
+              {(page - 1) * ITEMS_PER_PAGE + 1}
+            </span>{" "}
+            to <span className="font-medium">{page * ITEMS_PER_PAGE}</span> of{" "}
+            <span className="font-medium">{totalItems}</span> results
+          </p>
+        </div>
+        <div>
+          <nav
+            className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+            aria-label="Pagination"
+          >
+            <div className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <span className="sr-only">Previous</span>
+              <ChevronLeftIcon
+                className="h-5 w-5"
+                aria-hidden="true"
+                onClick={() => page > 1 && handlePage(page - 1)}
+              />
+            </div>
 
-function ProductGrid({ products, status }) {
+            {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" */}
+            {Array.from({ length: Math.ceil(totalItems / ITEMS_PER_PAGE) }).map(
+              (el, index) => {
+                const shouldShowPage = checkWhetherPageShouldBeShown(index);
+                const shouldShowPrevPage = checkWhetherPageShouldBeShown(
+                  index - 1
+                );
+                const shouldShowTwoPagesBack = checkWhetherPageShouldBeShown(
+                  index - 2
+                );
+                const content = shouldShowPage
+                  ? index + 1
+                  : !shouldShowPrevPage &&
+                    !shouldShowPage &&
+                    !shouldShowTwoPagesBack
+                    ? null
+                    : ".";
+                const additionalClass = content === null ? "hidden" : "";
+                return (
+                  <div
+                    onClick={() => handlePage(index + 1)} // Fixing onclick attribute
+                    aria-current="page"
+                    className={`relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${additionalClass}`}
+                  >
+                    {checkWhetherPageShouldBeShown(index)
+                      ? index + 1
+                      : !checkWhetherPageShouldBeShown(index - 1) &&
+                        !checkWhetherPageShouldBeShown(index) &&
+                        !checkWhetherPageShouldBeShown(index - 2)
+                        ? null
+                        : "."}
+                  </div>
+                );
+              }
+            )}
+
+            <div className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <span className="sr-only">Next</span>
+              <ChevronRightIcon
+                className="h-5 w-5"
+                aria-hidden="true"
+                onClick={() =>
+                  page < Math.ceil(totalItems / ITEMS_PER_PAGE) &&
+                  handlePage(page + 1)
+                }
+              />
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+}
+export function ProductGrid({ products, handleCart }) {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-          {status === "loading" ? (
-            <Grid
-              height="80"
-              width="80"
-              color="rgb(79, 70, 229) "
-              ariaLabel="grid-loading"
-              radius="12.5"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-          ) : null}
           {products.map((product) => (
-            <Link to={`/product-detail/${product.id}`} key={product.id}>
-            <div className="group relative border-solid border-2 p-2 border-gray-200 text-center">
-          
-              {/* Thumbnail */}
-              <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                <img
-                  src={product.thumbnail}
-                  alt={product.title}
-                  className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                />
-              </div>
-          
-              {/* Title */}
-              <div className="mt-4">
-                <h1 className="text-sm text-gray-700">
-                  <span aria-hidden="true" className="absolute inset-0" />
-                  {product.title}
-                </h1>
-              </div>
-          
-              {/* Price Section */}
-              <div className="mt-1">
-                <h1>
-                  <span className="text-xs font-medium text-gray-900">
-                    ${discountedPrice(product)}
-                  </span>
-                  <span className="text-xs line-through text-gray-400 mx-2">
-                    ${product.price}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {product.discountPercentage}% Off
-                  </span>
-                </h1>
-              </div>
-          
-              {/* Rating */}
-              <div className="mt-1 flex justify-center items-center">
-                <StarIcon className="w-4 h-4 text-yellow-400 inline-block" />
-                <span className="text-xs text-gray-500 align-bottom ml-1">
-                  {product.rating}
-                </span>
-              </div>
-          
-              {/* Add to Cart */}
+            <div className="group relative border-solid border-2 p-2 border-gray-200">
+              <Link to={`/product-detail/${product.id}`} key={product.id}>
+                <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
+                  <img
+                    src={product.thumbnail}
+                    alt={product.title}
+                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                  />
+                </div>
+                <div className="flex flex-col items-center mt-4">
+                  <h2
+                    className="text-sm text-gray-700 text-center leading-tight"
+                    style={{
+                      maxHeight: "3rem",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <b>{product.title}</b>
+                  </h2>
+                  <div className="flex items-center mt-1">
+                    <h1>
+                      <span className="text-xs font-medium text-gray-900">
+                        $
+                        {Math.round(
+                          product.price * (1 - product.discountPercentage / 100)
+                        )}
+                      </span>
+                      <span className="text-xs line-through text-gray-400 mx-2">
+                        ${product.price}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {product.discountPercentage}% Off
+                      </span>
+                    </h1>
+                  </div>
+                  <div className="flex mt-1 items-center">
+                    <Rating
+                      name="read-only"
+                      value={product.rating}
+                      readOnly
+                      precision={0.5}
+                    />
+                    <span className="text-xs text-gray-500 align-bottom ml-1">
+                      {product.rating}
+                    </span>
+                  </div>
+                  {product.deleted && (
+                    <div>
+                      <p className="text-sm text-red-400">product deleted</p>
+                    </div>
+                  )}
+                  {/* will not be needed when backend is implemented */}
+                </div>
+              </Link>
               <div className="grid grid-cols-4 gap-1 mt-2">
-                              <button className="col-span-3 bg-pink-500 text-white p-2 rounded">
-                                Add to Cart
-                              </button>
-                              <div className="col-span-1 flex justify-center items-center">
-                                <CartIcon color="pink"/>
-                              </div>
-                            </div>
-          
-              {/* Additional Information */}
-              {product.deleted && (
-                <p className="text-sm text-red-400 mt-2">product deleted</p>
-              )}
-              {product.stock <= 0 && (
-                <p className="text-sm text-red-400 mt-2">out of stock</p>
-              )}
+                <button
+                  onClick={(e) => handleCart(e, product)}
+                  type="submit"
+                  className="col-span-3 bg-pink-500 text-white p-2 rounded"
+                >
+                  <span>Add to Cart</span>
+                </button>
+                <div className="col-span-1 flex justify-center items-center">
+                  <CartIcon color="pink" width="6" height="6" />
+                </div>
+              </div>{" "}
+
             </div>
-          </Link>
-          
-          
           ))}
         </div>
       </div>

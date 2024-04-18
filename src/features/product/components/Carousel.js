@@ -11,7 +11,7 @@ export default function CarouselControlsInside({ recommendedProducts }) {
                   const slider = new Glide(glideRef.current, {
                         type: "carousel",
                         focusAt: "center",
-                        perView: 3,
+                        perView: Math.max(3, Math.min(4, recommendedProducts.length)),
                         autoplay: 3000,
                         animationDuration: 700,
                         gap: 24,
